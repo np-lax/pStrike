@@ -31,26 +31,16 @@ using namespace std;
 
 static char* hex2DecIP(const char *in)
 {
-	char *out = (char*)malloc(sizeof(char) * 16);
-    char *revOut = (char*)malloc(sizeof(char) * 16);
+	char *convIP = (char*)malloc(sizeof(char) * 16);
 
 	unsigned int p, q, r, s;
 
-    if (sscanf(in, "%2x%2x%2x%2x", &p, &q, &r, &s) != 4)
-        return out;
-//    sprintf(out, "%u.%u.%u.%u", p, q, r, s);
+	if (sscanf(in, "%2x%2x%2x%2x", &r, &q, &p, &s) != 4)
+		return convIP;
 	
-    sprintf(out, "%u.%u.%u.%u", s, r, q, p);
+   sprintf(convIP, "%u.%u.%u.%u", s, p, q, r);
 	
-	/*int arrEnd = sizeof(out);
-	
-	for(int x=0; x<arrEnd; x++){
-		out[x] = revOut[arrEnd];
-		arrEnd -= 1;	
-	}
-	cout << out << "||" << revOut << "\n";
-*/
-    return out;
+   return convIP;
 }
 
 /**
