@@ -13,6 +13,9 @@
 #include <sstream>
 #include <bits/stdc++.h>
 #include <regex>
+#include <algorithm>
+#include <iterator>
+
 using namespace std;
 
 /**
@@ -26,20 +29,44 @@ using namespace std;
 */
 
 
+static char* hex2DecIP(const char *in)
+{
+	char *out = (char*)malloc(sizeof(char) * 16);
+    char *revOut = (char*)malloc(sizeof(char) * 16);
+
+	unsigned int p, q, r, s;
+
+    if (sscanf(in, "%2x%2x%2x%2x", &p, &q, &r, &s) != 4)
+        return out;
+//    sprintf(out, "%u.%u.%u.%u", p, q, r, s);
+	
+    sprintf(out, "%u.%u.%u.%u", s, r, q, p);
+	
+	/*int arrEnd = sizeof(out);
+	
+	for(int x=0; x<arrEnd; x++){
+		out[x] = revOut[arrEnd];
+		arrEnd -= 1;	
+	}
+	cout << out << "||" << revOut << "\n";
+*/
+    return out;
+}
+
 /**
 	Parses linux proc file to get default gateway addr. Very non-portable. 
 	
 	@param fLocation location of proc file
-	@returns gatewayAddr string holding ipv4 address of default LAN gateway 
+	@returns gatewayAddr char* array holding ipv4 address of default LAN GW 
+	if now default GW found, returns 0
 */
-string parseProc(string fLocation){
+char* parseProc(string fLocation){
 	//create vector to hold proc file contents
 	vector <string> procTokens;
 	string procLine;
 	string token;
 	int colCount = 0;
 	regex hexIP("([A-Z]|[0-9]){8}");
-
 
 	//read in proc file
 	ifstream routeF(fLocation);
@@ -50,16 +77,23 @@ string parseProc(string fLocation){
 			/* use RE to check the token for hex-formatted IP addresses,
 			if match, add to vector array */
 			if(regex_match(token, hexIP)){
-				cout << "found hex IP: " << token << "\n";
 				procTokens.push_back(token);
 			}	
 		}
+		//when line ingested, check for default GW in token array
+		if((procTokens.size() >= 1) && (procTokens.at(0) == "00000000")){
+			char* decIP = hex2DecIP(procTokens.at(1).c_str());
+			if(decIP){
+				routeF.close();
+				return decIP;
+			}
+			}	
+		//clear out token array for next line
+		procTokens.clear();
+			
 	}
-	//refresh vector array at newline
-	cout << "Dest: " << procTokens.at(0) << "/GW: " << procTokens.at(1) << "\n";
-
-
-}
+	routeF.close();
+	return 0;
 }
 
 /**
@@ -87,13 +121,15 @@ bool netCheck(){
 	char badStart[] = "INITALIZATION FAILED";
 	char success[] = "[OK]";
 	char fail[] = "[FAILED]";
-	
+	char* gwIP;
+
+		
 	//begin self-check procedures
 	cout << lineBrk << chkSetup << lineBrk;
 
 	//check LAN connection
-	parseProc(procLocation);
-	
+	gwIP = parseProc(procLocation);
+	cout << "GATEWAY: " << gwIP << "\n";
 	//check inet connectivity using gethstbyaddr (default: google dns)
 	cout << inetChk << "\r";
 	inet_pton(AF_INET, addrToTest, &externalAddr);
