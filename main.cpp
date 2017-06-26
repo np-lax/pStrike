@@ -77,7 +77,8 @@ bool netCheck(){
 				cout << "good thus far";
 				cout << "sockfd" << sockfd;
 				cout << "google_ent" << google_ent;
-				cout << "socket" << socket(google_ent->h_addrtype,SOCK_STREAM,IPPROTO_TCP);
+				cout << "socket" << socket(google_ent->h_addrtype,SOCK_STREAM,
+				IPPROTO_TCP);
 		}
 
 }
