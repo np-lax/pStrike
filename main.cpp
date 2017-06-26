@@ -9,7 +9,10 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <arpa/inet.h>
-
+#include <fstream>
+#include <sstream>
+#include <bits/stdc++.h>
+#include <regex>
 using namespace std;
 
 /**
@@ -22,12 +25,47 @@ using namespace std;
 	@version 0.0 24 Jun 17
 */
 
+
+/**
+	Parses linux proc file to get default gateway addr. Very non-portable. 
+	
+	@param fLocation location of proc file
+	@returns gatewayAddr string holding ipv4 address of default LAN gateway 
+*/
+string parseProc(string fLocation){
+	//create vector to hold proc file contents
+	vector <string> procTokens;
+	string procLine;
+	string token;
+	int colCount = 0;
+	regex hexIP("([A-Z]|[0-9]){8}");
+
+
+	//read in proc file
+	ifstream routeF(fLocation);
+	while(getline(routeF, procLine)){
+		istringstream iss(procLine);
+		//tokenize file - columns are delimited by tabs
+		while(getline(iss, token,'\t')){
+			/* use RE to check the token for hex-formatted IP addresses,
+			if match, add to vector array */
+			if(regex_match(token, hexIP)){
+				cout << "found hex IP: " << token << "\n";
+				procTokens.push_back(token);
+			}	
+		}
+	}
+	//refresh vector array at newline
+	cout << "Dest: " << procTokens.at(0) << "/GW: " << procTokens.at(1) << "\n";
+
+
+}
+}
+
 /**
 	Perform connectivity checks to network and NASA APIs. Writes out the status 
 	of the checks
 		
-	@param winX			root window width
-	@param winY			root window height	
 	@return	ntwrkOK		bool value - true if can connect to NASA APIs
 */
 bool netCheck(){
@@ -36,7 +74,9 @@ bool netCheck(){
 	char addrToTest[] = "8.8.8.8"; //change to use new site to test internet 
 	struct hostent *externalSite = NULL;
 	struct in_addr externalAddr;
-	
+	string procLocation = "/proc/net/route";	
+
+
 	//build display strings
 	string chkSetup = "PERFORMING SETUP TASKS\n";
 	string lineBrk = "-----------------------\n";
@@ -51,7 +91,8 @@ bool netCheck(){
 	//begin self-check procedures
 	cout << lineBrk << chkSetup << lineBrk;
 
-	//check LAN connectivity using 
+	//check LAN connection
+	parseProc(procLocation);
 	
 	//check inet connectivity using gethstbyaddr (default: google dns)
 	cout << inetChk << "\r";
