@@ -15,6 +15,8 @@
 #include <regex>
 #include <algorithm>
 #include <iterator>
+#include "ping.hpp"
+
 
 using namespace std;
 
@@ -37,18 +39,20 @@ using namespace std;
 	@param *in const char array holding the (reversed) IP address in hex
 	@returns convIP char array holding ipv4 address of default LAN GW 
 */
-static char* hex2DecIP(const char *in)
+string hex2DecIP(const char *in)
 {
 	char *convIP = (char*)malloc(sizeof(char) * 16);
-
+	
 	unsigned int p, q, r, s;
 
 	if (sscanf(in, "%2x%2x%2x%2x", &r, &q, &p, &s) != 4)
 		return convIP;
 	
-   sprintf(convIP, "%u.%u.%u.%u", s, p, q, r);
+	sprintf(convIP, "%u.%u.%u.%u", s, p, q, r);
 	
-   return convIP;
+	string convIPStr(convIP);
+	
+	return convIPStr;
 }
 
 /**
@@ -58,11 +62,11 @@ static char* hex2DecIP(const char *in)
 	@returns gatewayAddr char* array holding ipv4 address of default LAN GW 
 	if now default GW found, returns 0
 */
-char* parseProc(string fLocation){
+string parseProc(string fLocation){
 	//create vector to hold proc file contents
 	vector <string> procTokens;
-	string procLine;
-	string token;
+	string procLine = " ";
+	string token= " ";
 	int colCount = 0;
 	regex hexIP("([A-Z]|[0-9]){8}");
 
@@ -80,18 +84,19 @@ char* parseProc(string fLocation){
 		}
 		//when line ingested, check for default GW in token array
 		if((procTokens.size() >= 1) && (procTokens.at(0) == "00000000")){
-			char* decIP = hex2DecIP(procTokens.at(1).c_str());
-			if(decIP){
+			string decIP = hex2DecIP(procTokens.at(1).c_str());
+			if(decIP != ""){
 				routeF.close();
 				return decIP;
 			}
-			}	
+		}	
 		//clear out token array for next line
 		procTokens.clear();
 			
 	}
+	//clean up & return
 	routeF.close();
-	return 0;
+	return "-1";
 }
 
 /**
@@ -114,21 +119,36 @@ bool netCheck(){
 	string lineBrk = "-----------------------\n";
 	string netChk = "Checking network connectivity....";
 	string inetChk = "Testing connection to internet....";
+	string gwIP;	
+	string msg;
 	char nasaC[] = "Attempting to communicate w/NASA API....";
 	char goodStart[] = "INITALIZATION SUCCESSFUL";
 	char badStart[] = "INITALIZATION FAILED";
 	char success[] = "[OK]";
 	char fail[] = "[FAILED]";
-	char* gwIP;
 
 		
 	//begin self-check procedures
 	cout << lineBrk << chkSetup << lineBrk;
 
-	//check LAN connection
-	cout << netChk << "\n";
-	gwIP = parseProc(procLocation);
-	cout << "GATEWAY: " << gwIP << "\n";
+	//check LAN connection by pinging gateway
+	cout << netChk << "\r";
+	//gwIP = parseProc(procLocation); //get gateway IP addr
+		
+	pingA pingTestObj;
+	string test = parseProc(procLocation);
+	int result = pingTestObj.sysPing(parseProc(procLocation), 4, msg);	
+	if(result == 1){
+		netChk = netChk + "[SUCCESS]\n";
+		cout << netChk;
+	}else{
+		netChk = netChk + "[FAILED]\n";
+		cout << netChk;
+		printf("ERROR: unable to ping gateway...exiting\n");
+		exit(0);
+	
+	}
+
 	//check inet connectivity using gethstbyaddr (default: google dns)
 	cout << inetChk << "\r";
 	inet_pton(AF_INET, addrToTest, &externalAddr);
@@ -138,7 +158,10 @@ bool netCheck(){
 		inetChk = inetChk + "[SUCCESS]\n";
 		cout << inetChk;
 	}else{
-		printf("ERROR: No internet connectivity");
+		inetChk = inetChk + "[FAILED]\n";
+		cout << inetChk;
+		printf("ERROR: unable to reach internet...exiting\n");
+		exit(0);
 	}
 
 
@@ -187,7 +210,8 @@ int main(int argc, char* argv[]){
 	bool netStatus;
 	
 	//clear the screen, display startup information
-	cout << DECORATION << ROOT_TITLE << DECORATION << "\n";
+	cout << "\033[2J\033[1;1H";
+	cout << DECORATION << ROOT_TITLE << DECORATION;
 
 	string input = "";
 		
