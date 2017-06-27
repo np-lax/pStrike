@@ -29,6 +29,14 @@ using namespace std;
 */
 
 
+
+
+/**
+	Converts hex IP address to 4-octet notation 
+	
+	@param *in const char array holding the (reversed) IP address in hex
+	@returns convIP char array holding ipv4 address of default LAN GW 
+*/
 static char* hex2DecIP(const char *in)
 {
 	char *convIP = (char*)malloc(sizeof(char) * 16);
@@ -118,6 +126,7 @@ bool netCheck(){
 	cout << lineBrk << chkSetup << lineBrk;
 
 	//check LAN connection
+	cout << netChk << "\n";
 	gwIP = parseProc(procLocation);
 	cout << "GATEWAY: " << gwIP << "\n";
 	//check inet connectivity using gethstbyaddr (default: google dns)
