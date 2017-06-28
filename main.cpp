@@ -16,8 +16,8 @@
 #include <algorithm>
 #include <iterator>
 #include "ping.hpp"
-
-
+//#include "neoAPI.hpp"
+#include <curl/curl.h>
 using namespace std;
 
 /**
@@ -102,10 +102,8 @@ string parseProc(string fLocation){
 /**
 	Perform connectivity checks to network and NASA APIs. Writes out the status 
 	of the checks
-		
-	@return	ntwrkOK		bool value - true if can connect to NASA APIs
 */
-bool netCheck(){
+void netCheck(){
 	//set up variables
 	bool ntwrkOK = false;
 	char addrToTest[] = "8.8.8.8"; //change to use new site to test internet 
@@ -164,31 +162,32 @@ bool netCheck(){
 		exit(0);
 	}
 
-
-
-	/*
-	//set up socket
-	sockfd = -1;
+	//check for connectivity to NASA NEO site
+	char buffer[256] = "https://api.nasa.gov/neo/rest/v1/feed?start_date=2015-09-07&end_date=2015-09-08&api_key=DEMO_KEY";	
+	char* url = buffer;
 	
-	if(google_ent != NULL){
-		if(sockfd = socket(google_ent->h_addrtype,SOCK_STREAM,IPPROTO_TCP) 
-		!= -1){
-				cout << "good thus far";
-				cout << "sockfd" << sockfd;
-				cout << "google_ent" << google_ent;
-				cout << "socket" << socket(google_ent->h_addrtype,SOCK_STREAM,
-				IPPROTO_TCP);
-		}
+	CURL *curl;
+	CURLcode res;	
 
-}
+	curl = curl_easy_init();
+  if(curl) {
+    curl_easy_setopt(curl, CURLOPT_URL, url);
+    /* example.com is redirected, so we tell libcurl to follow redirection */ 
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+ 
+    /* Perform the request, res will get the return code */ 
+    res = curl_easy_perform(curl);
+    /* Check for errors */ 
+    if(res != CURLE_OK)
+      fprintf(stderr, "curl_easy_perform() failed: %s\n",
+              curl_easy_strerror(res));
+ 
+    /* always cleanup */ 
+    curl_easy_cleanup(curl);
+  }
+	cout << res << endl;
+
 	
-
-
-	//clean up socket
-	if(sockfd!=-1)
-        close(sockfd);
-*/
-	return ntwrkOK;
 }
 
 /**
@@ -215,7 +214,7 @@ int main(int argc, char* argv[]){
 
 	string input = "";
 		
-	netStatus = netCheck();
+	netCheck();
 
 	cout << "Press 'Enter' to continue......";
 	getline(cin, input);
