@@ -1,3 +1,9 @@
+/*
+    @project    pStrike
+    @file       neoAPI.cpp - functions that speak w/NASA's NeoWs
+    @author     Rob Cilla
+*/
+
 #include "neoAPI.hpp"
 #include <curl/curl.h>
 #include <curl/easy.h>

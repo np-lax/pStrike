@@ -1,3 +1,9 @@
+/*
+    @project    pStrike
+    @file       ping.hpp
+    @author     Rob Cilla
+*/
+
 #ifndef __PING_HPP_
 #define __PING_HPP_
 

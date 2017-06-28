@@ -1,3 +1,9 @@
+/*
+    @project    pStrike
+    @file       ping.cpp - used to check for route to default gateway
+    @author     Rob Cilla
+*/
+
 #include "ping.hpp"
 int pingA::sysPing(std::string ipAddr, int attempts){
 	//set up stream, file, buffer, and variables

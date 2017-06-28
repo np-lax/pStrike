@@ -1,3 +1,8 @@
+/*
+    @project    pStrike
+    @file       neoAPI.hpp
+    @author     Rob Cilla
+*/
 #ifndef __NETUTILS_HPP_
 #define __NETUTILS_HPP_
 

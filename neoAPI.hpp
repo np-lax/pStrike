@@ -1,3 +1,9 @@
+/*
+    @project    pStrike
+    @file       neoAPI.hpp
+    @author     Rob Cilla
+*/
+
 #ifndef ___NEOAPI_HPP_
 #define __NEOAPI_HPP_
 

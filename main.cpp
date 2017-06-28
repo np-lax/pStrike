@@ -1,3 +1,14 @@
+/*
+	pStrike - A CLI tool for calculating theoretical asteroid strikes on
+	planets in the solar system using data from NASA's Near Earth Object Web 
+	Service API
+	
+	main.cpp
+
+	@author Rob Cilla
+	@version 0.0 24 Jun 17
+*/
+
 #include "netUtils.hpp" 
 #include <stdlib.h>
 #include <string>
@@ -6,23 +17,14 @@
 #include <thread>
 using namespace std;
 
-/**
-	EarthStrike - A TUI tool for calculating theoretical asteroid strikes on
-	planets in the solar system
-	
-	main.cpp
-
-	@author Rob Cilla
-	@version 0.0 24 Jun 17
-*/
 
 
-/**
-	Main program
+/*
+	main - main prgm loop
 	
 	@param argc		argument count
 	@param argv		arguments passed via command line
-	@return			int    cout << res << endl;
+	@return			exit status
 
 */
 int main(int argc, char* argv[]){

@@ -1,6 +1,6 @@
 /*
     @project	pStrike
-	@file		netUtils.cpp
+	@file		netUtils.cpp - centralizes various ntwrk-related functions
 	@author		Rob Cilla
 */
 
