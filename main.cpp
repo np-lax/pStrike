@@ -1,24 +1,9 @@
+#include "netUtils.hpp" 
 #include <stdlib.h>
 #include <string>
+#include <chrono>
 #include <iostream>
 #include <thread>
-#include <chrono>
-#include <sys/socket.h>
-#include <netinet/tcp.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <fstream>
-#include <sstream>
-#include <bits/stdc++.h>
-#include <regex>
-#include <algorithm>
-#include <iterator>
-#include "ping.hpp"
-#include "neoAPI.hpp"
-#include <curl/curl.h>
-
 using namespace std;
 
 /**
@@ -31,150 +16,6 @@ using namespace std;
 	@version 0.0 24 Jun 17
 */
 
-
-
-
-/**
-	Converts hex IP address to 4-octet notation 
-	
-	@param *in const char array holding the (reversed) IP address in hex
-	@returns convIP char array holding ipv4 address of default LAN GW 
-*/
-string hex2DecIP(const char *in)
-{
-	char *convIP = (char*)malloc(sizeof(char) * 16);
-	
-	unsigned int p, q, r, s;
-
-	if (sscanf(in, "%2x%2x%2x%2x", &r, &q, &p, &s) != 4)
-		return convIP;
-	
-	sprintf(convIP, "%u.%u.%u.%u", s, p, q, r);
-	
-	string convIPStr(convIP);
-	
-	return convIPStr;
-}
-
-/**
-	Parses linux proc file to get default gateway addr. Very non-portable. 
-	
-	@param fLocation location of proc file
-	@returns gatewayAddr char* array holding ipv4 address of default LAN GW 
-	if now default GW found, returns 0
-*/
-string parseProc(string fLocation){
-	//create vector to hold proc file contents
-	vector <string> procTokens;
-	string procLine = " ";
-	string token= " ";
-	int colCount = 0;
-	regex hexIP("([A-Z]|[0-9]){8}");
-
-	//read in proc file
-	ifstream routeF(fLocation);
-	while(getline(routeF, procLine)){
-		istringstream iss(procLine);
-		//tokenize file - columns are delimited by tabs
-		while(getline(iss, token,'\t')){
-			/* use RE to check the token for hex-formatted IP addresses,
-			if match, add to vector array */
-			if(regex_match(token, hexIP)){
-				procTokens.push_back(token);
-			}	
-		}
-		//when line ingested, check for default GW in token array
-		if((procTokens.size() >= 1) && (procTokens.at(0) == "00000000")){
-			string decIP = hex2DecIP(procTokens.at(1).c_str());
-			if(decIP != ""){
-				routeF.close();
-				return decIP;
-			}
-		}	
-		//clear out token array for next line
-		procTokens.clear();
-			
-	}
-	//clean up & return
-	routeF.close();
-	return "-1";
-}
-
-/**
-	Perform connectivity checks to network and NASA APIs. Writes out the status 
-	of the checks
-*/
-void netCheck(){
-	//set up variables
-	bool ntwrkOK = false;
-	char addrToTest[] = "8.8.8.8"; //change to use new site to test internet 
-	struct hostent *externalSite = NULL;
-	struct in_addr externalAddr;
-	string procLocation = "/proc/net/route";	
-
-
-	//build display strings
-	string chkSetup = "PERFORMING START-UP TASKS\n";
-	string lineBrk = "-----------------------\n";
-	string netChk = "Checking network connectivity....";
-	string inetChk = "Testing connection to internet....";
-	string nasaChk = "Attempting to connect to NASA Near Earth Object "
-	"Database....";
-
-	string gwIP;	
-
-		
-	//begin self-check procedures
-	cout << lineBrk << chkSetup << lineBrk;
-
-	//check LAN connection by pinging gateway
-	cout << netChk << "\r";
-	//gwIP = parseProc(procLocation); //get gateway IP addr
-		
-	pingA pingTestObj;
-	string test = parseProc(procLocation);
-	int result = pingTestObj.sysPing(parseProc(procLocation), 4, msg);	
-	if(result == 1){
-		netChk = netChk + "[SUCCESS]\n";
-		cout << netChk;
-	}else{
-		netChk = netChk + "[FAILED]\n";
-		cout << netChk;
-		printf("ERROR: unable to ping gateway...exiting\n");
-		exit(0);
-	
-	}
-
-	//check inet connectivity using gethstbyaddr (default: google dns)
-	cout << inetChk << "\r";
-	inet_pton(AF_INET, addrToTest, &externalAddr);
-	externalSite = gethostbyaddr(&externalAddr, sizeof externalAddr, AF_INET);
-	
-	if(externalSite != NULL){
-		inetChk = inetChk + "[SUCCESS]\n";
-		cout << inetChk;
-	}else{
-		inetChk = inetChk + "[FAILED]\n";
-		cout << inetChk;
-		cout << "ERROR: unable to reach internet...exiting\n";
-		exit(0);
-	}
-
-	//check ability to recieve NASA NEO API data
-	cout << nasaChk << "\r";
-	
-	NEOAPI n;
-	
-	if(n.testAPIConn()){
-		nasaChk = nasaChk + "[SUCCESS]\n\n\n";
-		cout << nasaChk;	
-	}else{
-		nasaChk = nasaChk + "[FAILED]\n";
-		cout << nasaChk;
-		cout << "ERROR: unable to get data from NASA NEO server...exiting\n";	
-		exit(0);
-	}
-}
 
 /**
 	Main program
@@ -190,19 +31,16 @@ int main(int argc, char* argv[]){
 	"============\n";
 	const char ROOT_TITLE[] = "\033[1;37;44mplanetStrike - Live Near Earth "
 	"Object Collision Calculator\033[0m\n";
-	
-	//set up variables
-	string dummyInput = "";
-	bool netStatus;
+	string input = "";	
 	
 	//clear the screen, display startup information
 	cout << "\033[2J\033[1;1H";
 	cout << DECORATION << ROOT_TITLE << DECORATION;
-
-	string input = "";
-		
+	
+	//check LAN/inet/API connections		
 	netCheck();
 
+	
 	std::this_thread::sleep_for(std::chrono::milliseconds(2500));
 	
 

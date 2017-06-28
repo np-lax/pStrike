@@ -1,5 +1,5 @@
 #include "ping.hpp"
-int pingA::sysPing(std::string ipAddr, int attempts, std::string& msg){
+int pingA::sysPing(std::string ipAddr, int attempts){
 	//set up stream, file, buffer, and variables
 	std::stringstream sstream;
 	std::string sysCmd;
@@ -28,8 +28,6 @@ int pingA::sysPing(std::string ipAddr, int attempts, std::string& msg){
 		
 		//get exit status of cmd
 		exitCode = pclose(inF); 
-		msg = sstream.str();
-		//std::cout << "EXITCODE: " << exitCode << "--" << msg << "\n";
 	}catch(const std::exception &e){
 		std::cerr << 
 		__FILE__ << 

@@ -18,7 +18,7 @@ class pingA{
 		int ethPort = 0);
 	
 	public:
-		int sysPing(std::string ipAddr, int attempts, std::string& msg);
+		int sysPing(std::string ipAddr, int attempts);
 
 };
 
