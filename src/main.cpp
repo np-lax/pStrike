@@ -30,7 +30,7 @@ using namespace std;
 int main(int argc, char* argv[]){
 	const char DECORATION[] = "==============================================="
 	"============\n";
-	const char ROOT_TITLE[] = "\033[1;37;44mplanetStrike - Live Near Earth "
+	const char ROOT_TITLE[] = "\033[1;37;44mplanetStrike - Near Earth "
 	"Object Collision Calculator\033[0m\n";
 	string input = "";	
 	string databaseDL = "Downloading Near Earth Object data for last 7 days....";
