@@ -148,7 +148,7 @@ void netCheck(){
     NEOAPI n;
 
     if(n.testAPIConn()){
-        nasaChk = nasaChk + "[SUCCESS]\n\n\n";
+        nasaChk = nasaChk + "[SUCCESS]\n";
         cout << nasaChk;
     }else{
         nasaChk = nasaChk + "[FAILED]\n";
