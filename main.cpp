@@ -16,8 +16,9 @@
 #include <algorithm>
 #include <iterator>
 #include "ping.hpp"
-//#include "neoAPI.hpp"
+#include "neoAPI.hpp"
 #include <curl/curl.h>
+
 using namespace std;
 
 /**
@@ -113,17 +114,14 @@ void netCheck(){
 
 
 	//build display strings
-	string chkSetup = "PERFORMING SETUP TASKS\n";
+	string chkSetup = "PERFORMING START-UP TASKS\n";
 	string lineBrk = "-----------------------\n";
 	string netChk = "Checking network connectivity....";
 	string inetChk = "Testing connection to internet....";
+	string nasaChk = "Attempting to connect to NASA Near Earth Object "
+	"Database....";
+
 	string gwIP;	
-	string msg;
-	char nasaC[] = "Attempting to communicate w/NASA API....";
-	char goodStart[] = "INITALIZATION SUCCESSFUL";
-	char badStart[] = "INITALIZATION FAILED";
-	char success[] = "[OK]";
-	char fail[] = "[FAILED]";
 
 		
 	//begin self-check procedures
@@ -158,36 +156,24 @@ void netCheck(){
 	}else{
 		inetChk = inetChk + "[FAILED]\n";
 		cout << inetChk;
-		printf("ERROR: unable to reach internet...exiting\n");
+		cout << "ERROR: unable to reach internet...exiting\n";
 		exit(0);
 	}
 
-	//check for connectivity to NASA NEO site
-	char buffer[256] = "https://api.nasa.gov/neo/rest/v1/feed?start_date=2015-09-07&end_date=2015-09-08&api_key=DEMO_KEY";	
-	char* url = buffer;
+	//check ability to recieve NASA NEO API data
+	cout << nasaChk << "\r";
 	
-	CURL *curl;
-	CURLcode res;	
-
-	curl = curl_easy_init();
-  if(curl) {
-    curl_easy_setopt(curl, CURLOPT_URL, url);
-    /* example.com is redirected, so we tell libcurl to follow redirection */ 
-    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
- 
-    /* Perform the request, res will get the return code */ 
-    res = curl_easy_perform(curl);
-    /* Check for errors */ 
-    if(res != CURLE_OK)
-      fprintf(stderr, "curl_easy_perform() failed: %s\n",
-              curl_easy_strerror(res));
- 
-    /* always cleanup */ 
-    curl_easy_cleanup(curl);
-  }
-	cout << res << endl;
-
+	NEOAPI n;
 	
+	if(n.testAPIConn()){
+		nasaChk = nasaChk + "[SUCCESS]\n\n\n";
+		cout << nasaChk;	
+	}else{
+		nasaChk = nasaChk + "[FAILED]\n";
+		cout << nasaChk;
+		cout << "ERROR: unable to get data from NASA NEO server...exiting\n";	
+		exit(0);
+	}
 }
 
 /**
@@ -195,7 +181,8 @@ void netCheck(){
 	
 	@param argc		argument count
 	@param argv		arguments passed via command line
-	@return			int
+	@return			int    cout << res << endl;
+
 */
 int main(int argc, char* argv[]){
 	//set up constants
@@ -215,6 +202,9 @@ int main(int argc, char* argv[]){
 	string input = "";
 		
 	netCheck();
+
+	std::this_thread::sleep_for(std::chrono::milliseconds(2500));
+	
 
 	cout << "Press 'Enter' to continue......";
 	getline(cin, input);
