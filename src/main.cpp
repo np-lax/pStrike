@@ -33,7 +33,7 @@ int main(int argc, char* argv[]){
 	const char ROOT_TITLE[] = "\033[1;37;44mplanetStrike - Live Near Earth "
 	"Object Collision Calculator\033[0m\n";
 	string input = "";	
-	string databaseDL = "Downloading Near Earth Object data for last 7 days....;
+	string databaseDL = "Downloading Near Earth Object data for last 7 days....";
 
 	
 	//clear the screen, display startup information
@@ -44,7 +44,7 @@ int main(int argc, char* argv[]){
 	netCheck();
 
 	//get current NEO data
-	cout << databaseDL << endl;
+	cout << databaseDL << "\n";
 	//someArray = getNEOData();
 
 	
