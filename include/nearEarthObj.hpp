@@ -19,9 +19,15 @@ class nearEarthObj{
 		const int objReadLines = 35;	//#of lines in each JPL object
 	
 	public:
+		neoObj();
+		~neoObj();
 		void createNEO(std::string objName, unsigned int objRefID);
-		std::string getObjName(unsigned int objRefID);
-			
+	
+
+		//getters
+		std::string getObjName() const;
+		double getObjAvgDiameter() const;
+		
 }
 
 #endif
