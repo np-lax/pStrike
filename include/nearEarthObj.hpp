@@ -2,7 +2,7 @@
 #define __NEAREARTHOBJ_HPP__
 
 #include <string>
-
+#include <vector>
 
 class nearEarthObj{
 	private:
