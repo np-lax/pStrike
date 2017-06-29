@@ -23,3 +23,5 @@ class nearEarthObj{
 		std::string getObjName(unsigned int objRefID);
 			
 }
+
+#endif
