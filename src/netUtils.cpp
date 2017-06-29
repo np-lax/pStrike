@@ -5,7 +5,6 @@
 */
 
 #include "../include/netUtils.hpp"
-#include "../include/neoAPI.hpp"
 #include "../include/ping.hpp"
 #include <stdio.h>
 #include <string>
@@ -15,8 +14,77 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <vector>
+#include <ctime>
+#include <curl/curl.h>
+#include <curl/easy.h>
+#include <curl/curlbuild.h>
 
 using namespace std;
+
+
+static size_t WriteCallback(void *contents,
+                            size_t size,
+                            size_t nmemb,
+                            void *userp)
+{
+    ((std::string*)userp)->append((char*)contents, size * nmemb);
+    return size * nmemb;
+}
+
+/*
+    getNEOData:Converts hex IP address to 4-octet notation 
+   
+	@param	 numDays	how many days you want data from (neg int gives days 
+						in front of date - default is 7 days back from today)
+	@param	 dateFrom	specify date to collect data from (in epoch time)
+						defaults to today
+	@param   apiKey		specific NASA api key to use (default is DEMO_KEY)
+    @returns neoArray vector array of pointers to nearEarthObjects
+*/
+void getNEOData(int numDays, string apiKey){
+	
+	char tBuff[20];
+	time_t currTime = time(NULL);
+	strftime(tBuff, 20, "%Y-%m-%d", localtime(&currTime));	
+	
+	string start(tBuff);
+	string end(tBuff);
+
+    string baseURL = "https://api.nasa.gov/neo/rest/v1/feed?start_date="+
+                     start + "&end_date=" + end + "&api_key=" + apiKey;
+
+    const char* url = baseURL.c_str();
+	
+	CURL *curl;
+	CURLcode res;
+	std::string readBuffer; 
+	
+	curl = curl_easy_init();
+
+	if(curl){
+		curl_easy_setopt(curl, CURLOPT_URL, url);
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+		res = curl_easy_perform(curl);
+		if(res != CURLE_OK){
+			fprintf(stderr, "curl_easy_perform() failed: %s\n",
+			curl_easy_strerror(res));
+		}else if(!readBuffer.empty()){
+			cout << "GOT" << readBuffer << endl;
+//			processNASAData(readBuffer);			
+		}else{
+			cout << "[ERROR]Got no data from NASA NeoWS....exiting";
+			exit(0);	
+		}
+	}
+	
+	curl_easy_cleanup(curl);
+	
+	
+
+}
+
 
 /*
     hex2DecIP:Converts hex IP address to 4-octet notation 
@@ -54,7 +122,6 @@ string parseProc(){
     string procLine = " ";
     string token= " ";
 	string fLocation = "/proc/net/route";
-    int colCount = 0;
     regex hexIP("([A-Z]|[0-9]){8}");
 
     //read in proc file
@@ -93,7 +160,6 @@ string parseProc(){
 */
 void netCheck(){
     //set up variables
-    bool ntwrkOK = false;
     char addrToTest[] = "8.8.8.8"; //change to use new site to test internet 
     struct hostent *externalSite = NULL;
     struct in_addr externalAddr;
@@ -105,8 +171,8 @@ void netCheck(){
     string lineBrk = "-----------------------\n";
     string netChk = "Checking network connectivity....";
     string inetChk = "Testing connection to internet....";
-    string nasaChk = "Attempting to connect to NASA Near Earth Object "
-    "Database....";
+    string nasaChk = "Attempting to get data from NASA Near Earth Object "
+    "Web Service....";
 
     //begin self-check procedures
     cout << lineBrk << chkSetup << lineBrk;
@@ -144,17 +210,8 @@ void netCheck(){
 
     //check ability to recieve NASA NEO API data
     cout << nasaChk << "\r";
-
-    NEOAPI n;
-
-    if(n.testAPIConn()){
-        nasaChk = nasaChk + "[SUCCESS]\n";
-        cout << nasaChk;
-    }else{
-        nasaChk = nasaChk + "[FAILED]\n";
-        cout << nasaChk;
-        cout << "ERROR: unable to get data from NASA NEO server...exiting\n";
-        exit(0);
-    }
+	
+	getNEOData(4, "DEMO_KEY");
+	    
 }
 	
