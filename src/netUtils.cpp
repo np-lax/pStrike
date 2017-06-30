@@ -33,16 +33,13 @@ static size_t WriteCallback(void *contents,
 }
 
 /*
-    getNEOData:Converts hex IP address to 4-octet notation 
+    getNEOData: get today's NEO feed from nasa 
    
-	@param	 numDays	how many days you want data from (neg int gives days 
-						in front of date - default is 7 days back from today)
-	@param	 dateFrom	specify date to collect data from (in epoch time)
-						defaults to today
 	@param   apiKey		specific NASA api key to use (default is DEMO_KEY)
+    @param   testConn   true if testing connection only
     @returns neoArray vector array of pointers to nearEarthObjects
 */
-void getNEOData(int numDays, string apiKey){
+void getTodayNEOData(string apiKey, bool testConn){
 	
 	char tBuff[20];
 	time_t currTime = time(NULL);
@@ -70,7 +67,7 @@ void getNEOData(int numDays, string apiKey){
 		if(res != CURLE_OK){
 			fprintf(stderr, "curl_easy_perform() failed: %s\n",
 			curl_easy_strerror(res));
-		}else if(!readBuffer.empty()){
+		else if(!readBuffer.empty()){
 			cout << "GOT" << readBuffer << endl;
 //			processNASAData(readBuffer);			
 		}else{
@@ -80,9 +77,6 @@ void getNEOData(int numDays, string apiKey){
 	}
 	
 	curl_easy_cleanup(curl);
-	
-	
-
 }
 
 
@@ -211,7 +205,8 @@ void netCheck(){
     //check ability to recieve NASA NEO API data
     cout << nasaChk << "\r";
 	
-	getNEOData(4, "DEMO_KEY");
+    getNEOData(4, "DEMO_KEY");
+    
 	    
 }
 	
