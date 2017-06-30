@@ -2,32 +2,42 @@
 #define __NEAREARTHOBJ_HPP__
 
 #include <string>
-#include <vector>
 
-class nearEarthObj{
-	private:
-		std::string objName;
-		unsigned int objRefID;
-		std::string objJPLURL;		//link to obj-specific JPL page
-		double objMinDiameter;		//in meters
-		double objMaxDiameter;		//in meters
-		bool objDanger;			//true if labeled dangerous
-		std::string objCloseApprDate;	//in YYYY-MM-DD format
-		double objRelativeVelocity;	//in KM per second
-		std::string objOrbitingBody;	//body the obj is orbiting
-		unsigned int objMissDistance;	//distance in meters
-		const int objReadLines = 35;	//#of lines in each JPL object
-	
-	public:
-		neoObj();
-		~neoObj();
-		void createNEO(std::string objName, unsigned int objRefID);
-	
+class near_earth_object{
+    public:
+        near_earth_object(int element_count,
+                          int ref_id, 
+                          std::string name,
+                          double max_diameter,
+                          double min_diameter,
+                          bool hazardous,
+                          std::string close_approach_date,
+                          double approach_velocity,
+                          int miss_distance); //constructor
 
-		//getters
-		std::string getObjName() const;
-		double getObjAvgDiameter() const;
-		
-}
+        //accessors
+        int get_el_count() const;
+        int get_ref_id() const;
+        std::string get_name();
+        double get_avg_diameter() const;
+        bool hazardous() const;
+        std::string get_close_approach_date() const;
+        double get_approach_velocity() const;
+        int get_miss_distance() const;
+
+    
+    private:
+        int element_count;
+        int ref_id;
+        std::string name;
+        double max_diameter;            //in meters
+        double min_diameter;
+        bool is_hazardous;              //true if hazardous
+        std::string close_approach_date;
+        double approach_velocity;       //in km/h
+        int miss_distance;              //in km
+};
+
+
 
 #endif
