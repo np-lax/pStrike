@@ -9,7 +9,8 @@
 	@version 0.0 24 Jun 17
 */
 
-#include "../include/netUtils.hpp" 
+#include "../include/net_utils.hpp" 
+#include "../include/neoWs.hpp"
 #include <stdlib.h>
 #include <string>
 #include <chrono>
@@ -17,7 +18,6 @@
 #include <thread>
 
 using namespace std;
-
 
 
 /*
@@ -32,22 +32,24 @@ int main(int argc, char* argv[]){
 	const char DECORATION[] = "==============================================="
 	"============\n";
 	const char ROOT_TITLE[] = "\033[1;37;44mplanetStrike - Near Earth "
-	"Object Collision Calculator\033[0m\n";
-	string input = "";	
-	string databaseDL = "Downloading Near Earth Object data for last 7 days....";
+	"Object Collision Calculator\033[0m     |\n";
 
+	string input = "";	
 	
 	//clear the screen, display startup information
 	cout << "\033[2J\033[1;1H";
 	cout << DECORATION << ROOT_TITLE << DECORATION;
+
+    //begin self-check procedures
+    string chk_setup = "PERFORMING START-UP TASKS|\n";
+    string line_brk =  "--------------------------\n";
+    cout << line_brk << chk_setup << line_brk;
 	
-	//check LAN/inet/API connections		
-	netCheck();
+	//check LAN/inet
+	int comm_res = comms_check();
 
-	//get current NEO data
-	cout << databaseDL << "\n";
-	//someArray = getNEOData();
-
+	//test API key & get current NEO data
+	string initial_data = initial_neo_data_dl("DEMO_KEY");
 	
 	std::this_thread::sleep_for(std::chrono::milliseconds(2500));
 	
