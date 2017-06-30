@@ -6,7 +6,7 @@
 
 #include "../include/net_utils.hpp"
 #include "../include/ping.hpp"
-#include "../include/neoWs.hpp"
+#include "../include/neo_web_functs.hpp"
 #include <stdio.h>
 #include <string>
 #include <regex>

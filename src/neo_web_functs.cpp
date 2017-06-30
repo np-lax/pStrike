@@ -1,4 +1,4 @@
-#include "../include/neoWs.hpp"
+#include "../include/neo_web_functs.hpp"
 #include <curl/curl.h>
 #include <curl/easy.h>
 #include <curl/curlbuild.h>
@@ -33,11 +33,11 @@ static size_t read_curl_data(void *contents,
     @returns neo_array  vector array of pointers to nearEarthObjects
 */
 string initial_neo_data_dl(string api_key){
-	string neoWs_chk = "Checking in w/NASA Near Earth Object Web Service..";
+	string neo_ws_chk = "Checking in w/NASA Near Earth Object Web Service..";
 
-	string neoWs_dl = "Downloading initial NEO dataset...................";
+	string neo_ws_dl = "Downloading initial NEO dataset...................";
 	
-	cout << neoWs_chk << "\r";
+	cout << neo_ws_chk << "\r";
 
     //set url for today's NEO feed
 	string base_url = "https://api.nasa.gov/neo/rest/v1/feed/today?detailed=" 
@@ -73,15 +73,14 @@ string initial_neo_data_dl(string api_key){
         //get & check HTTP response code
         curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_resp);
         if(http_resp == 200){
-			neoWs_chk = neoWs_chk + "[SUCCESS]\n";
-        	cout << neoWs_chk;
+            cout << neo_ws_chk + "[SUCCESS]\n";
 		}
 
 		//attempt to get today's NEO data set
-		cout << neoWs_dl << "\r";
+		cout << neo_ws_dl << "\r";
 
 		if(!read_buffer.empty()){
-        	cout << neoWs_dl + "[SUCCESS]\n";
+        	cout << neo_ws_dl + "[SUCCESS]\n";
             return read_buffer;
 		}else{
             cout << "[ERROR]Got no data from NASA NeoWS....exiting";

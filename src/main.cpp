@@ -10,7 +10,7 @@
 */
 
 #include "../include/net_utils.hpp" 
-#include "../include/neoWs.hpp"
+#include "../include/neo_web_functs.hpp"
 #include <stdlib.h>
 #include <string>
 #include <chrono>

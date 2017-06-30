@@ -3,8 +3,8 @@
     @file       neoWs.hpp
     @author     Rob Cilla
 */
-#ifndef __NEOWS_HPP_
-#define __NEOWS_HPP_
+#ifndef __NEO_WEB_FUNCTS_HPP_
+#define __NEO_WEB_FUNCTS_HPP_
 #include <string>
 
 
