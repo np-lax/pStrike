@@ -18,7 +18,7 @@
 #include <iostream>
 #include <thread>
 #include <sstream>
-
+#include <vector>
 
 
 using namespace std;
@@ -60,38 +60,33 @@ int main(int argc, char* argv[]){
     //cout << neo1.get_name() << endl;
 
     //vector array holds contents of NEO data
-    vector <string> tokens;
+    vector<string> returned_line;
+    string temp_line;  
+
+    string delimiter = ": ";
+    string eol = ",";
+
+    int num_neo_elements = -1;
+    vector<float> neo_ptr;
 
     //read in NEO data
-    istringstream iss(initial_data);
-    while(getline(route_f, proc_line)){
-        istringstream iss(proc_line);
-        //tokenize file - columns are delimited by tabs
-        while(getline(iss, token,'\t')){
-            /* use RE to check the token for hex-formatted IP addresses,
-            if match, add to array */
-            if(regex_match(token, hex_ip)){
-                proc_tokens.push_back(token);
+    stringstream ss(initial_data);
+    
+    if(!initial_data.empty()){
+        while(getline(ss, temp_line, '\n')){
+            //check for header containing element count
+            if(temp_line.find("element_count") != string::npos){
+                //find number of elements in NEO data
+                num_neo_elements = atoi(temp_line.substr(temp_line.find(delimiter) + 2, 1).c_str());            
+            //if line contains ref_id, it is the start of a new NEO obj
+            }else if(temp_line.find("\"neo_reference_id\" : \"" != string::npos){
+                //create new NEO object
+                    
             }
         }
-        //when line ingested, check for default GW in token array
-        if((proc_tokens.size() >= 1) && (proc_tokens.at(0) == "00000000")){
-            //if line contains default GW, convert IP to octet notation
-            string dec_ip = conv_hex_ip(proc_tokens.at(1).c_str());
-            if(dec_ip != ""){
-                route_f.close();
-                return dec_ip;
-            }
-        }
-        //clear out token array for next line
-        proc_tokens.clear();
-
     }
-    //clean up & return
-    route_f.close();
-    return "-1";
 
-
+    cout << "num elements: " << num_neo_elements << "\n";
 
 	std::this_thread::sleep_for(std::chrono::milliseconds(2500));
 	
