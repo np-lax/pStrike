@@ -90,7 +90,6 @@ int main(int argc, char* argv[]){
         while(getline(ss, temp_line, '\n')){
             if(temp_line.find("neo_reference_id") != string::npos){
                     //perform NEO start tasks
-
                     //set line count for NEO obj
                     line_count = 0;
 
@@ -112,26 +111,31 @@ int main(int argc, char* argv[]){
             
             //get data based on line number in NEO object
             switch(line_count){
-                case 0: id = atoi(temp_line.substr(temp_line.find("neo_reference_id") + 21, 7).c_str());
+                case 0: { id = atoi(temp_line.substr(temp_line.find("neo_reference_id") + 21, 7).c_str());
                         line_count += 1;
                         break;
+                }
 
-                case 1: token_size = (temp_line.find(")")) - (temp_line.find("("));
-                        neo_name = temp_line.substr(temp_line.find("(") + 1, token_size - 1);
+                case 1: { token_size = (temp_line.find(",")) - (temp_line.find(": "));
+                          
+
+                        neo_name = temp_line.substr(temp_line.find(": ") + 3, token_size - 6);
                         line_count += 1;
                         break;
-               
-               case 10: token_size = (temp_line.find(",") - (temp_line.find(":")));
-                        min_d = atof(temp_line.substr(temp_line.find(":") + 2, token_size - 2).c_str());
-                        line_count += 1;
-                        break;
+                }
+                            
+                case 10: { token_size = (temp_line.find(",") - (temp_line.find(":")));
+                         min_d = atof(temp_line.substr(temp_line.find(":") + 2, token_size - 2).c_str());
+                         line_count += 1;
+                         break;
+                }
                 
-               case 11: token_size = (temp_line.find(",") - (temp_line.find(":")));
+                case 11: { token_size = (temp_line.find(",") - (temp_line.find(":")));
                         max_d = atof(temp_line.substr(temp_line.find(":") + 2, token_size - 2).c_str());
                         line_count += 1;
                         break;
-                
-               case 22: token_size = (temp_line.find(",") - (temp_line.find(":")));
+                }
+                case 22: token_size = (temp_line.find(",") - (temp_line.find(":")));
                         tmp_str = temp_line.substr(temp_line.find(":") + 2, token_size - 2);
                         if(tmp_str.find("true") != string::npos){
                             is_haz = true;                    
@@ -141,19 +145,39 @@ int main(int argc, char* argv[]){
                         line_count += 1;
                         break;
 
-               case 24: token_size = (temp_line.find(",") - (temp_line.find(":")));
+                case 24: {token_size = (temp_line.find(",") - (temp_line.find(":")));
                         app_date = temp_line.substr(temp_line.find(":") + 3, token_size - 4);
-                        cout << app_date << endl;
                         line_count += 1;
                         break;
-               default: line_count += 1;
                 }
+                                
+                case 28: { token_size = (temp_line.find(",") - (temp_line.find(":")));
+                        app_vel = atof(temp_line.substr(temp_line.find(":") + 3, token_size - 4).c_str());
+                        line_count += 1;
+                        break;
+                }
+
+                case 34: { token_size = (temp_line.find(",") - (temp_line.find(":")));
+                        miss_dist = atof(temp_line.substr(temp_line.find(":") + 3, token_size - 4).c_str());
+                        line_count += 1;
+                        break;
+                }
+                case 37: { near_earth_object neo_n (id, neo_name, max_d, min_d, is_haz, app_date, app_vel, miss_dist);
+                         neo_arr.push_back(neo_n);
+                         line_count += 1;
+                         break;
+                }
+
+                default:{line_count += 1;}
+              }
 
             }
 
     }
 
-   
+    for(near_earth_object obj : neo_arr){
+            cout << "TEST:" << obj.get_name() << endl;
+        }
 /*
     if(!initial_data.empty()){
         while(getline(ss, temp_line, '\n')){

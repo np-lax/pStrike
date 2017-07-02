@@ -5,8 +5,7 @@
 
 class near_earth_object{
     public:
-        near_earth_object(int element_count,
-                          int ref_id, 
+        near_earth_object(int ref_id, 
                           std::string name,
                           double max_diameter,
                           double min_diameter,
@@ -16,7 +15,6 @@ class near_earth_object{
                           int miss_distance); //constructor
 
         //accessors
-        int get_el_count() const;
         int get_ref_id() const;
         std::string get_name();
         double get_avg_diameter() const;
@@ -27,7 +25,6 @@ class near_earth_object{
 
     
     private:
-        int element_count;
         int ref_id;
         std::string name;
         double max_diameter;            //in meters
