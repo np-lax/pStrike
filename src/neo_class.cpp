@@ -36,3 +36,22 @@ std::string Near_earth_object::get_name(){
     return name;
 }
 
+double Near_earth_object::get_size(){
+    return (max_diameter + min_diameter)/2;
+}
+
+double Near_earth_object::get_speed(){
+    return approach_velocity;
+}
+
+bool Near_earth_object::get_status(){
+    return is_hazardous;
+}
+
+std::string Near_earth_object::get_app_date(){
+    return close_approach_date;
+}
+
+int Near_earth_object::get_miss_distance(){
+    return miss_distance;
+}

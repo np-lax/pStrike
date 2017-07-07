@@ -17,11 +17,11 @@ class Near_earth_object{
   //accessors
   int get_ref_id() const;
   std::string get_name();
-  double get_avg_diameter() const;
-  bool hazardous() const;
-  std::string get_close_approach_date() const;
-  double get_approach_velocity() const;
-  int get_miss_distance() const;
+  double get_size();
+  bool get_status();
+  std::string get_app_date();
+  double get_speed();
+  int get_miss_distance();
 
     
   private:
@@ -34,6 +34,7 @@ class Near_earth_object{
    double approach_velocity;       //in km/h
    int miss_distance;              //in km
 };
+
 
 
 

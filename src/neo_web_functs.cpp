@@ -157,7 +157,7 @@ vector<Near_earth_object> build_neo_objs(string initial_data){
                 }
                 case 1: { 
                     token_size = (temp_line.find(",")) - (temp_line.find(": "));
-                    neo_name = temp_line.substr(16, temp_line.length() - 17);
+                    neo_name = temp_line.substr(16, temp_line.length() - 18);
                     line_count += 1;
                     break;
                 }
@@ -217,7 +217,7 @@ vector<Near_earth_object> build_neo_objs(string initial_data){
     }
     
     
-    cout << "** " << neo_arr.size() << " Near Earth Objects added to local database **" << endl;
+    cout << "\n**    " << neo_arr.size() << " Near Earth Objects added to local database    **" << endl;
 
     return neo_arr;
 }

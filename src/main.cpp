@@ -19,7 +19,7 @@
 #include <thread>
 #include <sstream>
 #include <vector>
-
+#include <math.h>
 
 using namespace std;
 
@@ -54,17 +54,36 @@ int main(int argc, char* argv[]){
 
 	//test API key & get current NEO data
 	string initial_data = initial_neo_data_dl("DEMO_KEY");
-   
+  
+    //build NEO objects with today's NeoWs data
     vector<Near_earth_object> neo_arr = build_neo_objs(initial_data);
-    
-	
-    
-    std::this_thread::sleep_for(std::chrono::milliseconds(2500));
-	
+    	
 	cout << "\nPress 'Enter' to continue......";
-	
     getline(cin, input);
-	
+
+    //clear screen
+    cout << "\033[2J\033[1;1H";
+	cout << DECORATION << ROOT_TITLE << DECORATION;
+    cout << "Select a near earth object:" << endl;
+
+    string header = "\tNAME\t\t\tSIZE\t\tSPEED\t\t\n";
+
+    cout << header << endl;
+
+    //display objects
+    for (int x = 0; x < neo_arr.size(); x++) {
+        cout << x << ") " << neo_arr[x].get_name() << "\t\t\t" << round(neo_arr[x].get_size()) << " meters\t\t" << round(neo_arr[x].get_speed()) << "KM/H\t\t" << endl;
+    }
+
+    cout << "User selection: ";
+    getline(cin, input);
+
+    //allow user to select object
+
+    //allow user to view data about object
+
+    //allow user to simulate planetary impact 
+
 	//cleanup & exit
 	return 0;
 }
