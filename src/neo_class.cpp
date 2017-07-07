@@ -11,7 +11,7 @@
 
 
 //near earth object constructor
-near_earth_object::near_earth_object(   int id, 
+Near_earth_object::Near_earth_object(   int id, 
                                         std::string neo_name,
                                         double max_d,
                                         double min_d,
@@ -32,7 +32,7 @@ near_earth_object::near_earth_object(   int id,
 
 
 //accessors
-std::string near_earth_object::get_name(){
+std::string Near_earth_object::get_name(){
     return name;
 }
 
