@@ -55,12 +55,6 @@ int main(int argc, char* argv[]){
 	//test API key & get current NEO data
 	string initial_data = initial_neo_data_dl("DEMO_KEY");
     
-    //near_earth_object neo1(6, 3214123, "obj1", 400, 200, true, "2017-07-30", 20000, 4000);
-
-    //cout << neo1.get_name() << endl;
-
-    //vector array holds contents of NEO data
-    
     //declare/set variables for search functions
     string temp_line;  
     string delimiter = ": ";
@@ -104,9 +98,6 @@ int main(int argc, char* argv[]){
                     app_date = "";
                     app_vel = 0;
                     miss_dist = 0;
-                    
-                    //iterate next line
-                   // continue;
             }
             
             //get data based on line number in NEO object
@@ -117,9 +108,7 @@ int main(int argc, char* argv[]){
                 }
 
                 case 1: { token_size = (temp_line.find(",")) - (temp_line.find(": "));
-                          
-
-                        neo_name = temp_line.substr(temp_line.find(": ") + 3, token_size - 6);
+                        neo_name = temp_line.substr(16, temp_line.length() - 17);
                         line_count += 1;
                         break;
                 }
@@ -175,32 +164,13 @@ int main(int argc, char* argv[]){
 
     }
 
-    for(near_earth_object obj : neo_arr){
+    
+    cout << "Got data for " << neo_arr.size() << " near earth objects";
+    
+    /*for(near_earth_object obj : neo_arr){
             cout << "TEST:" << obj.get_name() << endl;
         }
-/*
-    if(!initial_data.empty()){
-        while(getline(ss, temp_line, '\n')){
-            //check for header containing element count
-            if(temp_line.find("element_count") != string::npos){
-                //find number of elements in NEO data
-                num_neo_elements = atoi(temp_line.substr(temp_line.find(delimiter) + 2, 1).c_str());            
-            //if line contains ref_id, it is the start of a new NEO obj
-            }else if(temp_line.find("\"neo_reference_id\" : \"" != string::npos){
-                    id = atoi(temo_line.find()),
-                    std::string neo_name,
-                    double max_d,
-                    double min_d,
-                    bool is_haz,
-                    std::string app_date,
-                    double app_vel,
-                    int miss_dist                   
-            }
-        }
-    }
     */
-
-
 	std::this_thread::sleep_for(std::chrono::milliseconds(2500));
 	
 
