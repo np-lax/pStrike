@@ -32,7 +32,7 @@ const char ROOT_TITLE[] = "\033[1;37;44mplanetStrike - Near Earth "
 void print_header() {
 	//clear the screen, display startup information
 	cout << "\033[2J\033[1;1H";
-	cout << DECORATION << ROOT_TITLE << DECORATION;
+	cout << DECORATION << ROOT_TITLE << DECORATION << flush;
 }
 
 
@@ -45,9 +45,8 @@ void print_header() {
 
 */
 int main(int argc, char* argv[]){
-	string input = "";	
-    char menu_selection;
-
+    string input = "";
+    
     print_header();
 
     //begin self-check procedures
@@ -64,52 +63,56 @@ int main(int argc, char* argv[]){
     //build NEO objects with today's NeoWs data
     vector<Near_earth_object> neo_arr = build_neo_objs(initial_data);
     	
-	cout << "\nPress 'Enter' to continue......";
+	cout << "\nPress 'Enter' to continue......" << endl;
     getline(cin, input);
 
     //main program loop
 
+    int menu_selection;
+
     while (true) {
         print_header();
-
+        
         //print column headers
-        cout << setw(25) << left << "OBJ NAME" << setw(18) << left << "SIZE (meters)" << setw(15) << left << "SPEED (KM/H)" << endl;
+        cout << setw(25) << left << "OBJ NAME" << setw(18) << left << 
+        "SIZE (meters)" << setw(15) << left << "SPEED (KM/H)" << endl;
         cout << "-----------------------------------------------------" << endl;
         
-        //display objects
+        //display neo objects
         for (int x = 0; x < neo_arr.size(); x++) {
-            cout << x << ") " << setw(25) << left << neo_arr[x].get_name() << setw(18) << left << round(neo_arr[x].get_size()) << setw(15) << left << round(neo_arr[x].get_speed()) << endl;
+            cout << x << ") " << setw(25) << left << neo_arr[x].get_name() << 
+            setw(18) << left << round(neo_arr[x].get_size()) << setw(15) << 
+            left << round(neo_arr[x].get_speed()) << endl;
         }
-        
-        //capture user input
-        cout << "Select a near earth object (q to quit): ";
-        menu_selection = getchar();
-        
-        cout << "check" << isdigit(menu_selection) << endl;
 
-        getline(cin, input);
+        //print exit condition
+        cout << (neo_arr.size() + 1) << ") Quit" << endl;
 
-        //check selection is within bounds of the array, display all info about that object
-        if (isdigit(menu_selection)) {
-
-            int selected = menu_selection;
-            cout << selected << endl;
-
-            if ((selected >= 0) && (selected < neo_arr.size())) {
-                print_header();
-                cout << neo_arr[selected].get_name() << endl;	
+        //capture user input at main menu     
+        cout << "user selection: ";
+        cin >>  menu_selection;
+   
+        if (!cin.fail()) {      
+            if (menu_selection >= 0 && menu_selection < neo_arr.size()) {
+               print_header();
+               cout << neo_arr[menu_selection].get_name() << endl;
                 
-                cout << "1) Earth impact information | 2) Lunar impact information | 3) Return to object list" << endl;
-                cout << "Selection: ";
-                selected = getchar();
-
-                getline(cin, input);
+            } else if (menu_selection == neo_arr.size() + 1){
+                break;    
             }
-        } else if ((menu_selection == 'q') || (menu_selection == 'Q')) {
-            break;
+        } else {
+            cout << "* please select a valid menu entry *" << endl;    
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
         }
+      
+        this_thread::sleep_for (std::chrono::seconds(2));
 
 
+                
+            //    cout << "1) Earth impact information | 2) Lunar impact information | 3) Return to object list" << endl;
+            
+        
         //allow user to select object
 
         //allow user to view data about object
