@@ -12,6 +12,7 @@
 #include "../include/net_utils.hpp" 
 #include "../include/neo_web_functs.hpp"
 #include "../include/neo_class.hpp"
+#include "../include/neo_calcs.hpp"
 #include <stdlib.h>
 #include <string>
 #include <chrono>
@@ -94,18 +95,21 @@ int main(int argc, char* argv[]){
    
         if (!cin.fail()) {      
             if (menu_selection >= 0 && menu_selection < neo_arr.size()) {
-               print_header();
-               cout << neo_arr[menu_selection].get_name() << endl;
-                
+                print_header();
+                obj_selected(neo_arr[menu_selection]);
             } else if (menu_selection == neo_arr.size() + 1){
                 break;    
+            } else {
+                cout << "* please select a valid menu entry *" << endl;    
             }
         } else {
             cout << "* please select a valid menu entry *" << endl;    
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
         }
-      
+     
+
+        
         this_thread::sleep_for (std::chrono::seconds(2));
 
 
